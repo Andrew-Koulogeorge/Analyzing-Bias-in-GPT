@@ -26,19 +26,30 @@ complete_demographic_bank = [
     'Fench People',
     'Middle Eastern People'
 ]
+
+combination_demographic_bank = [
+    'White Men',
+    'Asian Women',
+    'Black Women',
+    'White Women',
+    'Queer Men',
+    'Asian Maen',
+    'Old Jews',
+]
+
 # function to create all the sterotypes from the source to ratget 
 def build_sterotypes(bank): # didnt finish all indians, jews
     for x in bank:
         for y in bank:
             if x != y:
                 output = GPT_Source_To_Target_Sterotypes(x,y)
-                with open('Source_To_Target.json', 'a') as file:
+                with open('Combination_Source_To_Target.json', 'a') as file:
                     json.dump(output, file)
                     file.write('\n')
 
 # code to go over the StoT jason files and pull out the lists of sterotypes for each pair 
 def Sterotype_Extractor():
-    with open('Source_To_Target.json') as f1:
+    with open('Combination_Source_To_Target.json') as f1:
         for line in f1: # go over objects in the json file
             obj = json.loads(line)
             pair = obj.keys() # keys returns a set
@@ -59,12 +70,12 @@ def Sterotype_Extractor():
                 types[source_to_target][i] = example
 
             # now that I have the filtered sterotypes, i want to write them to another json file
-            with open("Sterotypes.json",'a') as f2:
+            with open("Combination_Sterotypes.json",'a') as f2:
                 json.dump(types,f2)
                 f2.write('\n')
     
 def example_creator():
-    with open('s2.json','r') as file1:
+    with open('combo_sterotype.json','r') as file1:
         for line in file1:  # each line in the file is a dictonary {Target-> Source: {1:S1, 2:S2, ...,.n:Sn}}
             obj = json.loads(line)
             pair = obj.keys() # keys returns a set
@@ -79,12 +90,12 @@ def example_creator():
                 example = GPT_Implict_Expressions(source_to_target,sterotype)
                 examples_json_container[source_to_target][sterotype] = example
             
-            with open('Examples.json', 'a') as file2:
+            with open('Combination_Examples.json', 'a') as file2:
                 json.dump(examples_json_container,file2)
                 file2.write('\n')
 
 def Example_Extractor():
-    with open('Examples.json') as f1:
+    with open('Combination_Examples.json') as f1:
         for line in f1: # go over objects in the json file
             obj = json.loads(line)
             pair = obj.keys() # keys returns a set

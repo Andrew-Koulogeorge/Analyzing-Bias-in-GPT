@@ -42,15 +42,6 @@ def GPT_Implict_Expressions(source_to_target,sterotype):
     return response['choices'][0]["message"]["content"]
 
 
-def GPT_Responses(prompts):
-    #messages=[{'role':'assistant', 'content': Q} for Q in prompts[0:len(prompts)-2]]
-    messages = [{'role':'user', 'content': Q} for Q in prompts ]
-    print(messages)
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo", 
-        messages=messages,
-        temperature = 0)
-    return response['choices'][0]["message"]["content"] 
 
 
 # comment this out because this is running when im calling GPT_API
