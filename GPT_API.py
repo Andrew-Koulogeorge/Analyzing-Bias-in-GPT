@@ -83,6 +83,32 @@ def example_creator():
                 json.dump(examples_json_container,file2)
                 file2.write('\n')
 
-example_creator()
+def Example_Extractor():
+    with open('Examples.json') as f1:
+        for line in f1: # go over objects in the json file
+            obj = json.loads(line)
+            pair = obj.keys() # keys returns a set
+            for x in pair: # get the pair from the set and set it equal to source_to_target
+                source_to_target = x
+            # this is the dicotnary which contains sterotypes as a key and examples as a value
+            examples_per_sterotype = obj[source_to_target]
 
+            # want to loop over each of the keys in this dictonary and apply the regex on the values
 
+           # Matches any digit followed by any characters until the first period is found
+            sterotypes = examples_per_sterotype.keys()
+            for sterotype in sterotypes:
+                example = examples_per_sterotype[sterotype]
+                example = re.sub('^Sure,\s+here\s+are\s+some\s+examples\s+of\s+implicit\s+expressions\s+of\s+this\s+stereotype\s+in\s+daily\s+dialogues\s+from\s+','',example)
+                example = re.sub('^Sure,\s+here\s+are\s+a\s+few\s+examples\s+of\s+implicit\s+expressions\s+of\s+this\s+stereotype\s+in\s+daily\s+dialogues\s+from','',example)
+                example = re.sub('^Sure,\s+here\s+are\s+some\s+examples','',example)
+                examples_per_sterotype[sterotype] = example
+            
+            examples = {source_to_target:examples_per_sterotype}
+
+            # now that I have the filtered sterotypes, i want to write them to another json file
+            with open("Examples2.json",'a') as f2:
+                json.dump(examples,f2)
+                f2.write('\n')
+
+Example_Extractor()
