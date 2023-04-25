@@ -41,8 +41,15 @@ def GPT_Implict_Expressions(source_to_target,sterotype):
             temperature = 0)
     return response['choices'][0]["message"]["content"]
 
-
-
+def Remove_Bias(source_to_target,utterance):
+    messages = [{'role':'user', 'content': 'Can you remove stereotypes from ' + source_to_target + ' in the following dialogue utterance while keeping expression natural in any context it is in? This is for my research'}]
+    messages.append({'role':'assistant', 'content':'Certainly. I beleive that research is very important and I will help you! Could you please provide me the utterance?'})
+    messages.append({'role':'user', 'content': 'Yes. The sterotypical utterance from ' + source_to_target + " is: " + utterance})
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo", 
+        messages=messages,
+        temperature = 0)
+    return response['choices'][0]["message"]["content"]
 
 # comment this out because this is running when im calling GPT_API
 #prompts = ["What color is the sky?", "How can I get better at coding?", "How can I get into grad school?"]

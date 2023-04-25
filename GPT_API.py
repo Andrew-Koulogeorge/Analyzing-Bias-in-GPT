@@ -1,5 +1,6 @@
 from GPT import GPT_Source_To_Target_Sterotypes # why does this run GPT_Responses ?????????
 from GPT import GPT_Implict_Expressions
+from GPT import Remove_Bias
 import json
 import re
 
@@ -33,7 +34,7 @@ combination_demographic_bank = [
     'Black Women',
     'White Women',
     'Queer Men',
-    'Asian Maen',
+    'Asian Man',
     'Old Jews',
 ]
 
@@ -101,25 +102,65 @@ def Example_Extractor():
             pair = obj.keys() # keys returns a set
             for x in pair: # get the pair from the set and set it equal to source_to_target
                 source_to_target = x
-            # this is the dicotnary which contains sterotypes as a key and examples as a value
+            
+            # this is the dict which contains sterotypes as a key and examples as a value
             examples_per_sterotype = obj[source_to_target]
 
-            # want to loop over each of the keys in this dictonary and apply the regex on the values
+            # want to create a new dict for each sterotype. Sterotype will be the key and a dictonary examples will be the values
 
            # Matches any digit followed by any characters until the first period is found
             sterotypes = examples_per_sterotype.keys()
             for sterotype in sterotypes:
-                example = examples_per_sterotype[sterotype]
-                example = re.sub('^Sure,\s+here\s+are\s+some\s+examples\s+of\s+implicit\s+expressions\s+of\s+this\s+stereotype\s+in\s+daily\s+dialogues\s+from\s+','',example)
-                example = re.sub('^Sure,\s+here\s+are\s+a\s+few\s+examples\s+of\s+implicit\s+expressions\s+of\s+this\s+stereotype\s+in\s+daily\s+dialogues\s+from','',example)
-                example = re.sub('^Sure,\s+here\s+are\s+some\s+examples','',example)
-                examples_per_sterotype[sterotype] = example
+                examples = examples_per_sterotype[sterotype] # get the long string of all examples
+
+                # want to break up the examples 
+                pattern = re.compile(r'(?<=\n).*?(?=\n)') # subject to change
+                all_matches = re.findall(pattern, examples)
+                filerted_examples = [x for x in all_matches if x!= ''] # now have an array of all the examples for the pair and sterotype
+                for i in range(len(filerted_examples)):
+                    filerted_examples[i] = re.sub('\d+\.','',filerted_examples[i])
+
+                examples = {}
+                for i,example in enumerate(filerted_examples):
+                    i+=1
+                    examples[i] = example
+                examples_per_sterotype[sterotype] = examples
             
-            examples = {source_to_target:examples_per_sterotype}
+            line = {source_to_target:examples_per_sterotype}
 
             # now that I have the filtered sterotypes, i want to write them to another json file
-            with open("Examples2.json",'a') as f2:
-                json.dump(examples,f2)
+            with open("Clean_Combination_Examples.json",'a') as f2:
+                json.dump(line,f2)
                 f2.write('\n')
 
-Example_Extractor()
+def Bias_Remover():
+    # want to store all of these de-biased examples in an identical format with the examples changed
+    with open('Combination_Examples.json','r') as file1:
+        for line in file1:  # each line in the file is a dictonary {Target-> Source: {1:S1, 2:S2, ...,.n:Sn}}
+            obj = json.loads(line)
+            pair = obj.keys() # keys returns a set
+            for x in pair: # get the pair from the set and set it equal to source_to_target
+                source_to_target = x
+            
+        
+            sterotypes_to_examples= obj[source_to_target] # get the dict of sterotypes
+            sterotypes = sterotypes_to_examples.keys() # get a set of all the sterotypes
+            
+            for sterotype in sterotypes:
+                utterances = sterotypes_to_examples[sterotype] # get the dictonary of examples
+
+                # now want to loop over each example and send it to GPT. Replace output with 
+                for i in range(1,len(utterances)+1):
+                    index = str(i)
+                    utterance = utterances[index]
+                    clean_utterance = Remove_Bias(source_to_target,utterance)
+                    utterances[index] = clean_utterance
+                
+                sterotypes_to_examples[sterotype] = utterances
+            
+
+            with open('De-Biased_Combination_Examples.json', 'a') as file2:
+                json.dump({source_to_target:sterotypes_to_examples},file2)
+                file2.write('\n')
+            
+Bias_Remover()
