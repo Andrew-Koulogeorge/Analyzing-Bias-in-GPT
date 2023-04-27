@@ -133,15 +133,19 @@ def Example_Extractor():
                 json.dump(line,f2)
                 f2.write('\n')
 
-def Bias_Remover():
+
+# for whatever reason this does not work. Maybe lets just scrape out all of the examples and then loop over that
+# we dont need the sterotype
+def Example_Extractor():
     # want to store all of these de-biased examples in an identical format with the examples changed
-    with open('Combination_Examples.json','r') as file1:
+    with open('Examples_By_Sterotypes.json','r') as file1:
         for line in file1:  # each line in the file is a dictonary {Target-> Source: {1:S1, 2:S2, ...,.n:Sn}}
             obj = json.loads(line)
             pair = obj.keys() # keys returns a set
             for x in pair: # get the pair from the set and set it equal to source_to_target
                 source_to_target = x
-            
+
+            new = {source_to_target:[]}
         
             sterotypes_to_examples= obj[source_to_target] # get the dict of sterotypes
             sterotypes = sterotypes_to_examples.keys() # get a set of all the sterotypes
@@ -149,18 +153,37 @@ def Bias_Remover():
             for sterotype in sterotypes:
                 utterances = sterotypes_to_examples[sterotype] # get the dictonary of examples
 
-                # now want to loop over each example and send it to GPT. Replace output with 
                 for i in range(1,len(utterances)+1):
                     index = str(i)
                     utterance = utterances[index]
-                    clean_utterance = Remove_Bias(source_to_target,utterance)
-                    utterances[index] = clean_utterance
-                
-                sterotypes_to_examples[sterotype] = utterances
+                    new[source_to_target].append(utterance)
             
+            print(sterotypes_to_examples)
+            with open('Sterotype_Examples.json', 'a') as file2:
+                json.dump(new,file2)
+                file2.write('\n') 
 
-            with open('De-Biased_Combination_Examples.json', 'a') as file2:
-                json.dump({source_to_target:sterotypes_to_examples},file2)
-                file2.write('\n')
+# for whatever reason this does not work. Maybe lets just scrape out all of the examples and then loop over that
+# we dont need the sterotype
+def Bias_Remover():
+    # want to store all of these de-biased examples in an identical format with the examples changed
+    with open('left_to_run_combination.json','r') as file1:
+        for line in file1:  # each line in the file is a dictonary {Target-> Source: {1:S1, 2:S2, ...,.n:Sn}}
+            obj = json.loads(line)
+            pair = obj.keys() # keys returns a set
+            for x in pair: # get the pair from the set and set it equal to source_to_target
+                source_to_target = x
+
+            de_biased_examples = {source_to_target:[]}
+        
+            examples = obj[source_to_target] # get the dict of sterotypes
             
+            for utterance in examples:
+                clean_utterance = Remove_Bias(source_to_target,utterance)
+                de_biased_examples[source_to_target].append(clean_utterance)
+            
+            with open('Debiased_Combination_Sterotype_Examples.json', 'a') as file2:
+                json.dump(de_biased_examples,file2)
+                file2.write('\n') 
+
 Bias_Remover()
