@@ -167,7 +167,7 @@ def Example_Extractor():
 # we dont need the sterotype
 def Bias_Remover():
     # want to store all of these de-biased examples in an identical format with the examples changed
-    with open('left_to_run.json','r') as file1:
+    with open('left_to_run_combination.json','r') as file1:
         for line in file1:  # each line in the file is a dictonary {Target-> Source: {1:S1, 2:S2, ...,.n:Sn}}
             obj = json.loads(line)
             pair = obj.keys() # keys returns a set
@@ -182,6 +182,6 @@ def Bias_Remover():
                 clean_utterance = Remove_Bias(source_to_target,utterance)
                 de_biased_examples[source_to_target].append(clean_utterance)
             
-            with open('Debiased_Sterotype_Examples.json', 'a') as file2:
+            with open('Debiased_Combination_Sterotype_Examples.json', 'a') as file2:
                 json.dump(de_biased_examples,file2)
-                file2.write('\n') 
+                file2.write('\n')
