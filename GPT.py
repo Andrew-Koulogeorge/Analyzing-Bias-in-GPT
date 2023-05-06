@@ -51,9 +51,23 @@ def Remove_Bias(source_to_target,utterance):
         temperature = 0)
     return response['choices'][0]["message"]["content"]
 
+def sterotype_similiarty(stt1,sterolist1,stt2,sterolist2):
+    messages=[{'role':'user', 'content': 'Can you analyze these two lists of sterotypes and return sterotypes that are contained in each list? The two lists represent common sterotypes from one demoprahic group to another and I want to gain an understanding how similar these sterotype lists are to eachother!'}]
+    messages.append({'role':'assistant', 'content': 
+                     'Of course! I would be happy to help you conduct your research. Can you please specify what the source and the target groups are for each sterotype list? I would be happy to anlyze the two lists for similarity!'})
+    messages.append({'role':'user', 'content':'Here is the first list of sterotypes ' +  str(sterolist1) + ' which are sterotypes from '+ stt1 + ' and here is the second list of sterotypes ' +  str(sterolist2) + ' which are sterotypes from '+ stt2 + '. Can you return sterotypes that are present in both list?'})
+    response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo", 
+            messages=messages,
+            temperature = 0)
+    return response['choices'][0]["message"]["content"]
+
+
 # comment this out because this is running when im calling GPT_API
 #prompts = ["What color is the sky?", "How can I get better at coding?", "How can I get into grad school?"]
 #print(GPT_Responses(prompts=prompts))
 
 if __name__ == "__main__":
-    pass
+    x = sterotype_similiarty('Whites->Blacks',[" Black people are lazy and don't want to work.", " Black people are more prone to violence and crime.", " Black people are less intelligent than white people.", " Black people are all good at sports and have natural athletic ability.", " Black people are all poor and live in dangerous neighborhoods.", " Black people are all the same and have no individuality.", " Black people are all loud and aggressive.", " Black people are all good at dancing and have rhythm.", " Black people are all on welfare and rely on government assistance.", " Black people are all uneducated and lack ambition."]
+                         ,"Whites->Asians",[" All Asians are good at math and science.", " All Asians are quiet and reserved.", " All Asians are hardworking and diligent.", " All Asians are good at martial arts.", " All Asians are good at playing musical instruments.", " All Asians are good at technology and engineering.", " All Asians are good at cooking and eating exotic foods.", " All Asians are good at playing video games.", " All Asians are good at following rules and authority.", " All Asians are good at saving money and being frugal."])
+    print(x)
