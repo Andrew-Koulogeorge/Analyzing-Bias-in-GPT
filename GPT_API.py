@@ -1,6 +1,7 @@
 from GPT import GPT_Source_To_Target_Sterotypes # why does this run GPT_Responses ?????????
 from GPT import GPT_Implict_Expressions
 from GPT import Remove_Bias
+import random
 import json
 import re
 
@@ -138,7 +139,7 @@ def Example_Extractor():
 # we dont need the sterotype
 def Example_Extractor():
     # want to store all of these de-biased examples in an identical format with the examples changed
-    with open('Examples_By_Sterotypes.json','r') as file1:
+    with open('Sterotype_data/Sterotypes.json','r') as file1:
         for line in file1:  # each line in the file is a dictonary {Target-> Source: {1:S1, 2:S2, ...,.n:Sn}}
             obj = json.loads(line)
             pair = obj.keys() # keys returns a set
@@ -148,18 +149,19 @@ def Example_Extractor():
             new = {source_to_target:[]}
         
             sterotypes_to_examples= obj[source_to_target] # get the dict of sterotypes
-            sterotypes = sterotypes_to_examples.keys() # get a set of all the sterotypes
+            indexs = sterotypes_to_examples.keys() # get a set of all the sterotypes
             
-            for sterotype in sterotypes:
-                utterances = sterotypes_to_examples[sterotype] # get the dictonary of examples
+            for index in indexs:
+                sterotype = sterotypes_to_examples[index] # get the dictonary of examples
+                new[source_to_target].append(sterotype)
 
-                for i in range(1,len(utterances)+1):
-                    index = str(i)
-                    utterance = utterances[index]
-                    new[source_to_target].append(utterance)
+                #for i in range(1,len(utterances)+1):
+                    #index = str(i)
+                    #utterance = utterances[index]
+                    #new[source_to_target].append(utterance)
             
             print(sterotypes_to_examples)
-            with open('Sterotype_Examples.json', 'a') as file2:
+            with open('Sterotypes_By_List.json', 'a') as file2:
                 json.dump(new,file2)
                 file2.write('\n') 
 
@@ -186,4 +188,25 @@ def Bias_Remover():
                 json.dump(de_biased_examples,file2)
                 file2.write('\n') 
 
-Bias_Remover()
+def sample():
+    with open('Examples_By_Sterotypes.json','r') as file1:
+        for line in file1:  # each line in the file is a dictonary {Target-> Source: {1:S1, 2:S2, ...,.n:Sn}}
+            sample = {}
+            obj = json.loads(line)
+            pair = obj.keys() # keys returns a set
+            for x in pair: # get the pair from the set and set it equal to source_to_target
+                source_to_target = x
+            sterotypes = list(obj[source_to_target].keys())
+            random_sterotype = random.choice(sterotypes)
+
+            ### want to check that the examples is not empty
+            while obj[source_to_target][random_sterotype] == {}:
+                random_sterotype = random.choice(sterotypes)
+            
+            sample[source_to_target] = {random_sterotype:obj[source_to_target][random_sterotype]}
+            
+            with open('Sample-Examples_By_Sterotypes.json', 'a') as file2:
+                json.dump(sample,file2)
+                file2.write('\n') 
+
+Example_Extractor()
