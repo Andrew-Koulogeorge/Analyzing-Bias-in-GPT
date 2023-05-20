@@ -39,6 +39,24 @@ combination_demographic_bank = [
     'Old Jews',
 ]
 
+
+def sort_by_target(bank):
+    with open('./Sterotypes/Sterotypes_By_List.json') as f1:
+        for line in f1: # go over objects in the json file
+            obj = json.loads(line)
+            pair = obj.keys() # keys returns a set
+            for x in pair: # get the pair from the set and set it equal to source_to_target
+                source_to_target = x
+            ### source to target is a string from the source group to the target group. We want to get out what the target it
+            for x in bank:
+                if f"->{x}" in source_to_target: target = x
+            # now that I have the filtered sterotypes, i want to write them to another json file
+            with open(f"./Sterotypes/Sterotypes_By_Target/Sterotypes_Against{target}.json",'a') as f2:
+                json.dump(obj,f2)
+                f2.write('\n')
+            
+
+
 # function to create all the sterotypes from the source to ratget 
 def build_sterotypes(bank): # didnt finish all indians, jews
     for x in bank:
@@ -208,5 +226,5 @@ def sample():
             with open('Sample-Examples_By_Sterotypes.json', 'a') as file2:
                 json.dump(sample,file2)
                 file2.write('\n') 
-
-Example_Extractor()
+if __name__ == "__main__":
+    sort_by_target(complete_demographic_bank)
