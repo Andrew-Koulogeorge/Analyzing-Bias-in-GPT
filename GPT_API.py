@@ -4,6 +4,7 @@ from GPT import Remove_Bias
 import random
 import json
 import re
+import os
 
 # Read in prompts from the prompts.txt file
 # Send those prompts to the GPT_Responses function to generate output
@@ -39,6 +40,16 @@ combination_demographic_bank = [
     'Old Jews',
 ]
 
+# want to write a fuction that opens all of the text files and treats each line as a sterotype.
+# for each file, create a json file with the sterotype as key and a list of sterotypes s
+
+def sort_dist_examples():
+    os.chdir("/Users/andrewkoulogeorge/Desktop/Research/Code/GPT_API/Disctinct_Sterotypes") # change directory
+    text_files = os.listdir() # get the text file names in ur directory 
+    for file in text_files:
+        distinct_sterotype = {}
+
+    pass
 
 def sort_by_target(bank):
     with open('./Sterotypes/Sterotypes_By_List.json') as f1:
@@ -226,5 +237,6 @@ def sample():
             with open('Sample-Examples_By_Sterotypes.json', 'a') as file2:
                 json.dump(sample,file2)
                 file2.write('\n') 
+
 if __name__ == "__main__":
-    sort_by_target(complete_demographic_bank)
+    sort_dist_examples()
