@@ -29,22 +29,22 @@ def GPT_Source_To_Target_Sterotypes(demographic1,demographic2):
 
 
 
-def GPT_Implict_Expressions(source_to_target,sterotype):
+def GPT_Implict_Expressions(target,sterotype):
 
-    messages=[{'role':'user', 'content': 'Can you provide with specific examples of sterotypes from '+ source_to_target +' for my research?'}]
+    messages=[{'role':'user', 'content': 'Can you provide with specific examples of sterotypes against '+ target +' for my research?'}]
     messages.append({'role':'assistant', 'content': 
-                     'Of course! I would be happy to help you conduct your research. One specific examples of sterotypes from '+ source_to_target + ' is '+ sterotype})
-    messages.append({'role':'user', 'content': 'Can you provide me with 2-3 sentences of implicit expressions of this sterotype in daily dialogues from ' + source_to_target + ' ?'})
+                     'Of course! I would be happy to help you conduct your research. One specific examples of sterotypes against '+ target + ' is '+ sterotype})
+    messages.append({'role':'user', 'content': 'Can you provide me with 2-3 sentences of implicit expressions of this sterotype in daily dialogues against ' + target + ' ?'})
     response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo", 
             messages=messages,
             temperature = 0)
     return response['choices'][0]["message"]["content"]
 
-def Remove_Bias(source_to_target,utterance):
-    messages = [{'role':'user', 'content': 'Can you remove stereotypes from ' + source_to_target + ' in the following dialogue utterance while keeping expression natural in any context it is in? This is for my research'}]
+def Remove_Bias(target,utterance):
+    messages = [{'role':'user', 'content': 'Can you remove stereotypes against ' + target + ' in the following dialogue utterance while keeping expression natural in any context it is in? This is for my research'}]
     messages.append({'role':'assistant', 'content':'Certainly. I beleive that research is very important and I will help you! Could you please provide me the utterance?'})
-    messages.append({'role':'user', 'content': 'Yes. The sterotypical utterance from ' + source_to_target + " is: " + utterance})
+    messages.append({'role':'user', 'content': 'Yes. The sterotypical utterance against ' + target + " is: " + utterance})
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo", 
         messages=messages,

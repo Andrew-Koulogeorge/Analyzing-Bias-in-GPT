@@ -46,10 +46,15 @@ combination_demographic_bank = [
 def sort_dist_examples():
     os.chdir("/Users/andrewkoulogeorge/Desktop/Research/Code/GPT_API/Disctinct_Sterotypes") # change directory
     text_files = os.listdir() # get the text file names in ur directory 
-    for file in text_files:
-        distinct_sterotype = {}
-
-    pass
+    print(f"text files that we want to extract from: {text_files}")
+    for file in text_files: # looping over the names of all of the text files
+        if file != "Distinct":
+            distinct_sterotype = {}
+            with open(f"./{file}",'r') as f1:
+                distinct_sterotype[file] = f1.readlines()
+            with open(f"./Distinct",'a') as f2:
+                json.dump(distinct_sterotype,f2)
+                f2.write('\n')
 
 def sort_by_target(bank):
     with open('./Sterotypes/Sterotypes_By_List.json') as f1:
@@ -106,27 +111,25 @@ def Sterotype_Extractor():
                 f2.write('\n')
     
 def example_creator():
-    with open('combo_sterotype.json','r') as file1:
+    with open('/Users/andrewkoulogeorge/Desktop/Research/Code/GPT_API/Disctinct_Sterotypes/Distinct.json','r') as file1:
         for line in file1:  # each line in the file is a dictonary {Target-> Source: {1:S1, 2:S2, ...,.n:Sn}}
             obj = json.loads(line)
             pair = obj.keys() # keys returns a set
             for x in pair: # get the pair from the set and set it equal to source_to_target
-                source_to_target = x
+                target = x
         
-            sterotypes = obj[source_to_target] # get the dict of sterotypes
-            examples_json_container = {source_to_target: {}} # container that will hold the examples for each sterotype
-            for i in range(1,len(sterotypes)+1): # looping over each sterotype
-                index = str(i)
-                sterotype = sterotypes[index]
-                example = GPT_Implict_Expressions(source_to_target,sterotype)
-                examples_json_container[source_to_target][sterotype] = example
-            
-            with open('Combination_Examples.json', 'a') as file2:
+            sterotypes = obj[target] # get the dict of sterotypes
+            examples_json_container = {target: {}} # container that will hold the examples for each sterotype
+            for i in range(len(sterotypes)): # looping over each sterotype
+                sterotype = sterotypes[i]
+                example = GPT_Implict_Expressions(target,sterotype)
+                examples_json_container[target][sterotype] = example
+            with open('Distinct_Examples.json', 'a') as file2:
                 json.dump(examples_json_container,file2)
                 file2.write('\n')
 
 def Example_Extractor():
-    with open('Combination_Examples.json') as f1:
+    with open('/Users/andrewkoulogeorge/Desktop/Research/Code/GPT_API/Disctinct_Sterotypes/Distinct_Examples.json') as f1:
         for line in f1: # go over objects in the json file
             obj = json.loads(line)
             pair = obj.keys() # keys returns a set
@@ -239,4 +242,4 @@ def sample():
                 file2.write('\n') 
 
 if __name__ == "__main__":
-    sort_dist_examples()
+    example_creator()
