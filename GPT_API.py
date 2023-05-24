@@ -5,6 +5,7 @@ import random
 import json
 import re
 import os
+from time import sleep
 
 # Read in prompts from the prompts.txt file
 # Send those prompts to the GPT_Responses function to generate output
@@ -70,6 +71,7 @@ def sort_by_target(bank):
             with open(f"./Sterotypes/Sterotypes_By_Target/Sterotypes_Against{target}.json",'a') as f2:
                 json.dump(obj,f2)
                 f2.write('\n')
+                
             
 
 
@@ -111,7 +113,7 @@ def Sterotype_Extractor():
                 f2.write('\n')
     
 def example_creator():
-    with open('/Users/andrewkoulogeorge/Desktop/Research/Code/GPT_API/Disctinct_Sterotypes/Distinct.json','r') as file1:
+    with open('/home/andrew/GPT_API/Disctinct_Sterotypes/Distinct.json','r') as file1:
         for line in file1:  # each line in the file is a dictonary {Target-> Source: {1:S1, 2:S2, ...,.n:Sn}}
             obj = json.loads(line)
             pair = obj.keys() # keys returns a set
@@ -120,13 +122,19 @@ def example_creator():
         
             sterotypes = obj[target] # get the dict of sterotypes
             examples_json_container = {target: {}} # container that will hold the examples for each sterotype
+            print(f"generating examples for {target}")
             for i in range(len(sterotypes)): # looping over each sterotype
                 sterotype = sterotypes[i]
                 example = GPT_Implict_Expressions(target,sterotype)
                 examples_json_container[target][sterotype] = example
-            with open('Distinct_Examples.json', 'a') as file2:
+                #print(f"Falling Asleep!")
+                #sleep(10)
+                #print(f"Waking up!")
+            with open('/home/andrew/GPT_API/Disctinct_Sterotypes/Distinct_Examples.json', 'a') as file2:
                 json.dump(examples_json_container,file2)
                 file2.write('\n')
+                print("Got one!")
+                #sleep(10)
 
 def Example_Extractor():
     with open('/Users/andrewkoulogeorge/Desktop/Research/Code/GPT_API/Disctinct_Sterotypes/Distinct_Examples.json') as f1:
