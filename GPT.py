@@ -39,7 +39,7 @@ def GPT_Implict_Expressions(target,sterotype):
             model="gpt-3.5-turbo", 
             messages=messages,
             temperature = 0)
-    print(f"Made a req to GPT")
+    print(f"Chat completed")
     return response['choices'][0]["message"]["content"]
 
 def Remove_Bias(target,utterance):
